@@ -2,6 +2,7 @@
   "name": "@cley_faye/react-bulma-tag-autocomplete",
   "version": "0.1.0",
   "description": "Input field with a list of selected tags that allows autocomplete to add new tags.",
+  "main": "lib/taginput.js",
   "scripts": {
     "prepack": "npx grunt"
   },
