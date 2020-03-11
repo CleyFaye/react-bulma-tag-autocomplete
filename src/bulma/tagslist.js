@@ -2,14 +2,35 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export default class TagsList extends React.Component {
+  _renderChildrens() {
+    if (!this.props.children) {
+      return;
+    }
+    return React.Children.map(
+      this.props.children,
+      child => {
+        if (!child) {
+          return;
+        }
+        return <div className="control">
+          {child}
+        </div>;
+      },
+    );
+  }
+
   render() {
     const labelElem = this.props.label
       ? <span>{this.props.label}</span>
       : undefined;
-    return <div className="tags">
-      {labelElem}&nbsp;:
-      {this.props.children}
-    </div>;
+    return <>
+      <span className="is-size-7 has-text-weight-semibold">
+        {labelElem}
+      </span>
+      <div className="field is-grouped is-grouped-multiine">
+        {this._renderChildrens()}
+      </div>
+    </>;
   }
 }
 TagsList.displayName = "TagsList";

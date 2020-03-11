@@ -14,13 +14,14 @@ export default class TagInput extends React.Component {
         filterString: "",
         filterList: [],
         error: null,
+        selection: 0,
         nameCache: {},
       },
     );
     changeHandler(this);
     this.handleAdd = this.handleAdd.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this._callGetLabelForValue = this._callGetLabelForValue.bind(this);
   }
 
@@ -50,31 +51,66 @@ export default class TagInput extends React.Component {
     this._callChange(newValue);
   }
 
-  handleKeyUp(ev) {
-    const RETURN = 13;
-    if (ev.keyCode === RETURN) {
+  handleKeyDown(ev) {
+    if (ev.key === "Enter") {
       const filteredList = this._filteredResultsList();
-      if (filteredList.length === 1) {
-        this.updateState({filterString: ""});
-        this.handleAdd(filteredList[0]);
-        return;
-      }
       if (
-        Object.values(this.state.nameCache).includes(this.state.filterString)
+        filteredList.length > 0
+        && this.state.selection < filteredList.length
       ) {
-        for (const key in this.state.nameCache) {
-          if (this.state.nameCache[key] === this.state.filterString) {
-            this.updateState({filterString: ""});
-            this.handleAdd(key);
-            return;
-          }
+        const selection = this.state.selection;
+        if (filteredList.length === 1) {
+          this.updateState({filterString: ""});
         }
+        this.updateState({selection: Math.max(0, selection - 1)});
+        this.handleAdd(filteredList[selection]);
       }
+    }
+    if (
+      [
+        "ArrowDown",
+        "Down",
+      ].includes(ev.key)
+    ) {
+      ev.preventDefault();
+      this.updateState(oldState => {
+        let selection = oldState.selection + 1;
+        const filteredList = this._filteredResultsList();
+        if (selection >= filteredList.length) {
+          selection = 0;
+        }
+        return {selection};
+      });
+    }
+    if (
+      [
+        "ArrowUp",
+        "Up",
+      ].includes(ev.key)
+    ) {
+      ev.preventDefault();
+      this.updateState(oldState => {
+        let selection = oldState.selection - 1;
+        if (selection < 0) {
+          const filteredList = this._filteredResultsList();
+          selection = filteredList.length - 1;
+        }
+        return {selection};
+      });
+    }
+  }
+
+  _checkUpdateSelection(value, label) {
+    if (label === this.state.filterString) {
+      const filteredList = this._filteredResultsList();
+      this.updateState({selection: filteredList.indexOf(value)});
     }
   }
 
   _callGetLabelForValue(value) {
     if (this.state.nameCache[value] !== undefined) {
+      const label = this.state.nameCache[value];
+      this._checkUpdateSelection(value, label);
       return Promise.resolve(this.state.nameCache[value]);
     }
     let retrievedLabel;
@@ -86,7 +122,10 @@ export default class TagInput extends React.Component {
         retrievedLabel = label;
         return {nameCache};
       }))
-      .then(() => retrievedLabel);
+      .then(() => {
+        this._checkUpdateSelection(value, retrievedLabel);
+        return retrievedLabel;
+      });
   }
 
   _callGetCompletion() {
@@ -97,7 +136,10 @@ export default class TagInput extends React.Component {
   _refreshFilter() {
     // Trigger using delayed async
     this._callGetCompletion(this.state.filterString)
-      .then(filterList => this.updateState({filterList}))
+      .then(filterList => this.updateState({
+        filterList,
+        selection: 0,
+      }))
       .catch(error => this.updateState({error}));
   }
 
@@ -121,41 +163,34 @@ export default class TagInput extends React.Component {
 
   _renderActiveTags() {
     if (this.props.value.length === 0) {
-      return;
+      return [];
     }
-    return <TagsList
-      label={this.props.enabledLabel}
-    >
-      {this.props.value.map(
-        value => <AsyncTag
-          key={value}
-          value={value}
-          color="success"
-          getLabelForValue={this._callGetLabelForValue}
-          onDelete={this.handleDelete}
-        />,
-      )}
-    </TagsList>;
+    return this.props.value.map(
+      value => <AsyncTag
+        key={value}
+        value={value}
+        color="success"
+        getLabelForValue={this._callGetLabelForValue}
+        onDelete={this.handleDelete}
+      />,
+    );
   }
 
   _renderFilterTags() {
     const filteredResults = this._filteredResultsList();
     if (filteredResults.length === 0) {
-      return;
+      return [];
     }
-    return <TagsList
-      label={this.props.filterLabel}
-    >
-      {this._filteredResultsList().map(
-        value => <AsyncTag
-          key={value}
-          value={value}
-          color="primary"
-          getLabelForValue={this._callGetLabelForValue}
-          onClick={this.handleAdd}
-        />,
-      )}
-    </TagsList>;
+    return this._filteredResultsList().map(
+      (value, id) => <AsyncTag
+        key={value}
+        value={value}
+        extra={id === this.state.selection ? "+" : undefined}
+        color={id === this.state.selection ? "warning" : "primary"}
+        getLabelForValue={this._callGetLabelForValue}
+        onClick={this.handleAdd}
+      />,
+    );
   }
 
   render() {
@@ -175,12 +210,16 @@ export default class TagInput extends React.Component {
           value={this.state.filterString}
           onChange={this.handleChange}
           placeholder={this.props.placeholder}
-          onKeyUp={this.handleKeyUp}
+          onKeyDown={this.handleKeyDown}
           autoComplete="off"
         />
       </div>
-      {this._renderActiveTags()}
-      {this._renderFilterTags()}
+      <TagsList label={this.props.tagsLabel}>
+        {[
+          ...this._renderActiveTags(),
+          ...this._renderFilterTags(),
+        ]}
+      </TagsList>
     </div>;
   }
 }
@@ -193,8 +232,7 @@ TagInput.propTypes = {
   name: PropTypes.string,
   getLabelForValue: PropTypes.func.isRequired,
   getCompletion: PropTypes.func.isRequired,
-  enabledLabel: PropTypes.string,
-  filterLabel: PropTypes.string,
+  tagsLabel: PropTypes.string,
 };
 TagInput.defaultProps = {
   label: undefined,
@@ -202,6 +240,5 @@ TagInput.defaultProps = {
   value: undefined,
   onChange: undefined,
   name: undefined,
-  enabledLabel: "Active",
-  filterLabel: "Add",
+  tagsLabel: "Active",
 };

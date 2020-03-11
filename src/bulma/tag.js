@@ -2,11 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export default class Tag extends React.Component {
-  render() {
-    const colorClass = this.props.color
-      ? ` is-${this.props.color}`
+  _renderTag(color, label, main) {
+    if (!label) {
+      return;
+    }
+    const colorClass = color
+      ? ` is-${color}`
       : "";
-    const deleteButton = this.props.onDelete
+    const deleteButton = (this.props.onDelete && main)
       ? <button
         type="button"
         className="delete is-small"
@@ -18,13 +21,20 @@ export default class Tag extends React.Component {
         onClick={this.props.onClick}
         className={`tag is-link${colorClass}`}
       >
-        {this.props.label}
+        {label}
         {deleteButton}
       </a>
       : <span className={`tag${colorClass}`}>
-        {this.props.label}
+        {label}
         {deleteButton}
       </span>;
+  }
+
+  render() {
+    return <div className="tags has-addons">
+      {this._renderTag(this.props.color, this.props.label, true)}
+      {this._renderTag(this.props.extraColor, this.props.extra)}
+    </div>;
   }
 }
 Tag.displayName = "Tag";
@@ -33,9 +43,13 @@ Tag.propTypes = {
   onDelete: PropTypes.func,
   onClick: PropTypes.func,
   color: PropTypes.string,
+  extra: PropTypes.string,
+  extraColor: PropTypes.string,
 };
 Tag.defaultProps = {
   onDelete: undefined,
   onClick: undefined,
   color: undefined,
+  extra: undefined,
+  extraColor: undefined,
 };

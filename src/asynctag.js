@@ -38,9 +38,11 @@ export default class AsyncTag extends React.Component {
 
   render() {
     const {
+      // eslint-disable-next-line no-unused-vars
       getLabelForValue: _getLabelForValue,
       onDelete,
       onClick,
+      // eslint-disable-next-line no-unused-vars
       value: _value,
       ...otherProps
     } = this.props;

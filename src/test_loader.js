@@ -20,6 +20,9 @@ const possibleValues = [
 const getLabelForValue = value => Promise.resolve(possibleValues[value]);
 
 const getCompletion = filterString => {
+  if (filterString === "") {
+    return [];
+  }
   const values = possibleValues.filter(
     v => v.indexOf(filterString) !== -1,
   );
