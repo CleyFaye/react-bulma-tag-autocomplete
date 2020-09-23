@@ -27,7 +27,7 @@ export default class TagsList extends React.Component {
       <span className="is-size-7 has-text-weight-semibold">
         {labelElem}
       </span>
-      <div className="field is-grouped is-grouped-multiine">
+      <div className="field is-grouped is-grouped-multiline">
         {this._renderChildrens()}
       </div>
     </>;
