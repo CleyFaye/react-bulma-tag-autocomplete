@@ -6,6 +6,7 @@
   "scripts": {
     "prepack": "npx grunt"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CleyFaye/react-bulma-tag-autocomplete.git"
