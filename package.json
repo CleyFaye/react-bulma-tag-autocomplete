@@ -37,7 +37,7 @@
   },
   "peerDependencies": {
     "prop-types": "15.x",
-    "react": "16.x"
+    "react": "17.x"
   },
   "dependencies": {
     "@cley_faye/react-utils": "^0.11.1"
