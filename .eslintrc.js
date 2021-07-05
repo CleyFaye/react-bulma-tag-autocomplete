@@ -1,5 +1,5 @@
-const eslintConfig = require("@cley_faye/eslint-config");
+const eslintConfig = require("@keeex/eslint-config");
 
 module.exports = eslintConfig({
-  jsx: "16.13",
+  jsx: "17.0",
 });
