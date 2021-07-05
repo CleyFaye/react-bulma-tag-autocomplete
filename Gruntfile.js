@@ -1,5 +1,5 @@
-const loadGruntTasks = require("load-grunt-tasks");
 const {resolve} = require("path");
+const loadGruntTasks = require("load-grunt-tasks");
 
 /**
  * Babel options; shared between build and webpack test build

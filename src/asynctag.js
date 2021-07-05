@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Tag from "./bulma/tag";
+import Tag from "./bulma/tag.js";
 
 export default class AsyncTag extends React.Component {
   constructor(props) {

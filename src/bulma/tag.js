@@ -2,6 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export default class Tag extends React.Component {
+  renderDeleteButton(main) {
+    if (this.props.onDelete && main) {
+      return <button
+        type="button"
+        className="delete is-small"
+        onClick={this.props.onDelete}
+      />;
+    }
+  }
+
   _renderTag(color, label, main) {
     if (!label) {
       return;
@@ -9,25 +19,21 @@ export default class Tag extends React.Component {
     const colorClass = color
       ? ` is-${color}`
       : "";
-    const deleteButton = (this.props.onDelete && main)
-      ? <button
-        type="button"
-        className="delete is-small"
-        onClick={this.props.onDelete}
-      />
-      : undefined;
-    return this.props.onClick
-      ? <a
+    const deleteButton = this.renderDeleteButton(main);
+    if (this.props.onClick) {
+      return <a
         onClick={this.props.onClick}
         className={`tag is-link${colorClass}`}
       >
         {label}
         {deleteButton}
-      </a>
-      : <span className={`tag${colorClass}`}>
-        {label}
-        {deleteButton}
-      </span>;
+      </a>;
+    }
+
+    return <span className={`tag${colorClass}`}>
+      {label}
+      {deleteButton}
+    </span>;
   }
 
   render() {

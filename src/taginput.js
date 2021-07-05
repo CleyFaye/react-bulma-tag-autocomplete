@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TagsList from "./bulma/tagslist";
-import AsyncTag from "./asynctag";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
+import exState from "@cley_faye/react-utils/lib/mixin/exstate.js";
+import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler.js";
+import TagsList from "./bulma/tagslist.js";
+import AsyncTag from "./asynctag.js";
 
 export default class TagInput extends React.Component {
   constructor(props) {

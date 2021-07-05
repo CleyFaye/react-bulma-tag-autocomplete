@@ -2,9 +2,9 @@
 /* eslint-env browser */
 import React from "react";
 import ReactDOM from "react-dom";
-import TagInput from "./taginput";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
+import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler.js";
+import exState from "@cley_faye/react-utils/lib/mixin/exstate.js";
+import TagInput from "./taginput.js";
 
 const possibleValues = [
   "user1",
