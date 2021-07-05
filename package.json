@@ -4,7 +4,8 @@
   "description": "Input field with a list of selected tags that allows autocomplete to add new tags.",
   "main": "lib/taginput.js",
   "scripts": {
-    "prepack": "npx grunt"
+    "prepack": "npm run grunt",
+    "grunt": "npm exec grunt -- --gruntfile Gruntfile.cjs"
   },
   "type": "module",
   "repository": {
