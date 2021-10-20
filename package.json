@@ -34,7 +34,7 @@
     "grunt-babel": "^8.0.0",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-webpack": "^4.0.3",
-    "http-server": "^0.12.1",
+    "http-server": "^14.0.0",
     "load-grunt-tasks": "^5.1.0",
     "webpack": "^5.42.0"
   },
