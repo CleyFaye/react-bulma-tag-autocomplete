@@ -1,5 +1,6 @@
 const {resolve} = require("path");
 const loadGruntTasks = require("load-grunt-tasks");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 /**
  * Babel options; shared between build and webpack test build
@@ -63,13 +64,9 @@ const webpackConfig = {
           loader: "babel-loader",
           options: babelOptions,
         },
-        {
-          test: /\.js$/u,
-          exclude: /node_modules/u,
-          loader: "eslint-loader",
-        },
       ],
     },
+    plugins: [new ESLintPlugin()],
   },
 };
 
