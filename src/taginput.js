@@ -212,7 +212,7 @@ export default class TagInput extends React.Component {
       <div className="control is-expanded">
         <input
           className="input"
-          type="text"
+          type="search"
           name="filterString"
           value={this.state.filterString}
           onChange={this.handleChange}
