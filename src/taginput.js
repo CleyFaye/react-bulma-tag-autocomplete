@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate.js";
 import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler.js";
+import asyncTriggerMixin from "@cley_faye/react-utils/lib/mixin/asynctrigger.js";
 import TagsList from "./bulma/tagslist.js";
 import AsyncTag from "./asynctag.js";
 
@@ -19,15 +20,22 @@ export default class TagInput extends React.Component {
       },
     );
     changeHandler(this);
+    asyncTriggerMixin(this);
     this.handleAdd = this.handleAdd.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this._callGetLabelForValue = this._callGetLabelForValue.bind(this);
+    const REFRESH_DELAY = 700;
+    this.registerAsyncTrigger(
+      "refreshFilter",
+      this.asyncTriggerRefreshFilter.bind(this),
+      REFRESH_DELAY,
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.filterString !== this.state.filterString) {
-      this._refreshFilter();
+      this.asyncTrigger("refreshFilter");
     }
   }
 
@@ -133,8 +141,7 @@ export default class TagInput extends React.Component {
       .then(() => this.props.getCompletion(this.state.filterString));
   }
 
-  _refreshFilter() {
-    // Trigger using delayed async
+  asyncTriggerRefreshFilter() {
     this._callGetCompletion(this.state.filterString)
       .then(filterList => this.updateState({
         filterList,
