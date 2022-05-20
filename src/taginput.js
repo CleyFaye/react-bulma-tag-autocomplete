@@ -232,14 +232,14 @@ export default class TagInput extends React.Component {
 }
 TagInput.displayName = "TagInput";
 TagInput.propTypes = {
-  label: PropTypes.string,
+  label: PropTypes.node,
   placeholder: PropTypes.string,
   value: PropTypes.array,
   onChange: PropTypes.func,
   name: PropTypes.string,
   getLabelForValue: PropTypes.func.isRequired,
   getCompletion: PropTypes.func.isRequired,
-  tagsLabel: PropTypes.string,
+  tagsLabel: PropTypes.node,
 };
 TagInput.defaultProps = {
   label: undefined,

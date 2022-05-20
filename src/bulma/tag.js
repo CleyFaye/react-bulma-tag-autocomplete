@@ -45,11 +45,11 @@ export default class Tag extends React.Component {
 }
 Tag.displayName = "Tag";
 Tag.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.node.isRequired,
   onDelete: PropTypes.func,
   onClick: PropTypes.func,
   color: PropTypes.string,
-  extra: PropTypes.string,
+  extra: PropTypes.node,
   extraColor: PropTypes.string,
 };
 Tag.defaultProps = {

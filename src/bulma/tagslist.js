@@ -36,7 +36,7 @@ export default class TagsList extends React.Component {
 TagsList.displayName = "TagsList";
 TagsList.propTypes = {
   children: PropTypes.node,
-  label: PropTypes.string,
+  label: PropTypes.node,
 };
 TagsList.defaultProps = {
   children: undefined,
