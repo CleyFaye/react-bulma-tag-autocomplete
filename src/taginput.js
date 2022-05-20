@@ -1,33 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate.js";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler.js";
 import asyncTriggerMixin from "@cley_faye/react-utils/lib/mixin/asynctrigger.js";
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler.js";
 import TagsList from "./bulma/tagslist.js";
 import AsyncTag from "./asynctag.js";
 
 export default class TagInput extends React.Component {
   constructor(props) {
     super(props);
-    exState(
-      this,
-      {
-        filterString: "",
-        filterList: [],
-        error: null,
-        selection: 0,
-        nameCache: {},
-      },
-    );
-    changeHandler(this);
-    asyncTriggerMixin(this);
+    this.state = {
+      filterString: "",
+      filterList: [],
+      error: null,
+      selection: 0,
+      nameCache: {},
+    };
+    this.handleChange = changeHandlerMixin(this);
     this.handleAdd = this.handleAdd.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this._callGetLabelForValue = this._callGetLabelForValue.bind(this);
     const REFRESH_DELAY = 700;
-    this.registerAsyncTrigger(
-      "refreshFilter",
+    this.refreshFilterTrigger = asyncTriggerMixin(
+      this,
       this.asyncTriggerRefreshFilter.bind(this),
       REFRESH_DELAY,
     );
@@ -35,7 +30,7 @@ export default class TagInput extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.filterString !== this.state.filterString) {
-      this.asyncTrigger("refreshFilter");
+      this.refreshFilterTrigger.trigger();
     }
   }
 
@@ -68,9 +63,9 @@ export default class TagInput extends React.Component {
       ) {
         const selection = this.state.selection;
         if (filteredList.length === 1) {
-          this.updateState({filterString: ""});
+          this.setState({filterString: ""});
         }
-        this.updateState({selection: Math.max(0, selection - 1)});
+        this.setState({selection: Math.max(0, selection - 1)});
         this.handleAdd(filteredList[selection]);
       }
     }
@@ -81,7 +76,7 @@ export default class TagInput extends React.Component {
       ].includes(ev.key)
     ) {
       ev.preventDefault();
-      this.updateState(oldState => {
+      this.setState(oldState => {
         let selection = oldState.selection + 1;
         const filteredList = this._filteredResultsList();
         if (selection >= filteredList.length) {
@@ -97,7 +92,7 @@ export default class TagInput extends React.Component {
       ].includes(ev.key)
     ) {
       ev.preventDefault();
-      this.updateState(oldState => {
+      this.setState(oldState => {
         let selection = oldState.selection - 1;
         if (selection < 0) {
           const filteredList = this._filteredResultsList();
@@ -111,7 +106,7 @@ export default class TagInput extends React.Component {
   _checkUpdateSelection(value, label) {
     if (label === this.state.filterString) {
       const filteredList = this._filteredResultsList();
-      this.updateState({selection: filteredList.indexOf(value)});
+      this.setState({selection: filteredList.indexOf(value)});
     }
   }
 
@@ -124,7 +119,7 @@ export default class TagInput extends React.Component {
     let retrievedLabel;
     return Promise.resolve()
       .then(() => this.props.getLabelForValue(value))
-      .then(label => this.updateState(oldState => {
+      .then(label => this.setState(oldState => {
         const nameCache = {...oldState.nameCache};
         nameCache[value] = label;
         retrievedLabel = label;
@@ -143,11 +138,11 @@ export default class TagInput extends React.Component {
 
   asyncTriggerRefreshFilter() {
     this._callGetCompletion(this.state.filterString)
-      .then(filterList => this.updateState({
+      .then(filterList => this.setState({
         filterList,
         selection: 0,
       }))
-      .catch(error => this.updateState({error}));
+      .catch(error => this.setState({error}));
   }
 
   _filteredResultsList() {

@@ -2,8 +2,7 @@
 /* eslint-env browser */
 import React from "react";
 import ReactDOM from "react-dom";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler.js";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate.js";
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler.js";
 import TagInput from "./taginput.js";
 
 const possibleValues = [
@@ -32,11 +31,8 @@ const getCompletion = filterString => {
 class TagInputTester extends React.Component {
   constructor(props) {
     super(props);
-    exState(
-      this,
-      {fieldList: [3]},
-    );
-    changeHandler(this);
+    this.state = {fieldList: [3]};
+    this.handleChange = changeHandlerMixin(this);
   }
 
   render() {
