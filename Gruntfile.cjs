@@ -11,7 +11,7 @@ const babelOptions = {
     [
       "@babel/preset-env",
       {
-        targets: "last 2 versions, not dead",
+        targets: "> 1%, last 1 safari version",
         modules: false,
         useBuiltIns: "usage",
         corejs: 3,
@@ -75,6 +75,10 @@ module.exports = grunt => {
 
   grunt.initConfig(
     {
+      clean: {
+        lib: ["lib"],
+        test: ["test/loader.js"],
+      },
       babel: babelConfig,
       webpack: webpackConfig,
     },
